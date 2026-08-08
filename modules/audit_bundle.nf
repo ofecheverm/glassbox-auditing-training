@@ -3,7 +3,7 @@ process AUDIT_BUNDLE {
     label 'process_single'
     // DEFECT: "latest" is a rolling tag — this container can silently
     // change behind your back with no warning
-    container 'python:latest'
+    container 'python:3.11-slim'
 
     input:
     tuple val(meta), path(vcf), path(valid_jsonl), path(quarantine_jsonl)
