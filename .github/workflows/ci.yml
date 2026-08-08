@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check setup script syntax
+        run: bash -n setup.sh
+
+      - name: Check Python syntax
+        run: python -m py_compile bin/*.py
+
+      - name: Validate sample JSON file
+        run: python -m json.tool tests/sample.audit_bundle.json > /dev/null
+
+      - name: Validate JSONL files
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          for path in Path("tests").glob("*.jsonl"):
+              with path.open() as handle:
+                  for line_number, line in enumerate(handle, start=1):
+                      line = line.strip()
+                      if line:
+                          json.loads(line)
+              print(f"Validated {path}")
+          PY
