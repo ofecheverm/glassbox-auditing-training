@@ -1,3 +1,3 @@
-{"variant_id": "chr1_12345_A_T", "priority_score": 7, "rules_triggered": ["passed_filter", "high_quality_call", "adequate_depth"], "rule_version": "v1.0.0", "timestamp": "2026-07-25T10:36:37.220425+00:00"}
-{"variant_id": "chr1_67890_G_GA", "priority_score": 6, "rules_triggered": ["passed_filter", "indel_variant"], "rule_version": "v1.0.0", "timestamp": "2026-07-25T10:36:37.220425+00:00"}
-{"variant_id": "chr2_11111_C_T", "priority_score": 0, "rules_triggered": [], "rule_version": "v1.0.0", "timestamp": "2026-07-25T10:36:37.220425+00:00"}
+{"variant_id": "chr1_12345_A_T", "priority_score": 7, "rules_triggered": ["passed_filter", "high_quality_call", "adequate_depth"], "rule_version": "v1.0.0"}
+{"variant_id": "chr1_67890_G_GA", "priority_score": 6, "rules_triggered": ["passed_filter", "indel_variant"], "rule_version": "v1.0.0"}
+{"variant_id": "chr2_11111_C_T", "priority_score": 0, "rules_triggered": [], "rule_version": "v1.0.0"}
