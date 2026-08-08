@@ -14,7 +14,6 @@ process JSON_VALIDATION {
 
     script:
     """
-
     json_validation.py ${triage_jsonl} ${schema} ${meta.id}.valid.jsonl ${meta.id}.quarantine.jsonl
 
     cat <<-END_VERSIONS > versions.yml
