@@ -14,8 +14,6 @@ process JSON_VALIDATION {
 
     script:
     """
-    # DEFECT: package installed at runtime, not baked into the container
-    pip install --quiet jsonschema
 
     json_validation.py ${triage_jsonl} ${schema} ${meta.id}.valid.jsonl ${meta.id}.quarantine.jsonl
 
