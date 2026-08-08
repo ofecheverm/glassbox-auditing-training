@@ -6,7 +6,6 @@ Rule-based, deterministic variant triage. No AI model calls, CPU-only.
 import sys
 import json
 import gzip
-from datetime import datetime, timezone
 
 RULE_VERSION = "v1.0.0"
 
@@ -49,7 +48,6 @@ def main(vcf_path, out_path):
     # DEFECT: timestamp captured once but written into EVERY record —
     # compare two separate runs and every record differs, even if
     # nothing else changed.
-    timestamp = datetime.now(timezone.utc).isoformat()
     with open_vcf(vcf_path) as vcf, open(out_path, "w") as out:
         for line in vcf:
             if line.startswith("#"):
@@ -65,7 +63,6 @@ def main(vcf_path, out_path):
                 "priority_score": score,
                 "rules_triggered": rules,
                 "rule_version": RULE_VERSION,
-                "timestamp": timestamp,
             }
             out.write(json.dumps(record) + "\n")
 
