@@ -1,2 +1,2 @@
-{"variant_id": "chr3_99999_A_G", "priority_score": "high", "rules_triggered": ["passed_filter"], "rule_version": "v1.0.0", "timestamp": "2026-07-25T10:36:37.220425+00:00"}
-{"variant_id": "chr4_55555_T_C", "priority_score": 5, "rules_triggered": ["passed_filter"], "timestamp": "2026-07-25T10:36:37.220425+00:00"}
+{"variant_id": "chr3_99999_A_G", "priority_score": "high", "rules_triggered": ["passed_filter"], "rule_version": "v1.0.0"}
+{"variant_id": "chr4_55555_T_C", "priority_score": 5, "rules_triggered": ["passed_filter"]}
