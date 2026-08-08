@@ -13,7 +13,6 @@ The input file hash is calculated from a committed artefact and cannot be typed 
 import sys
 import json
 import hashlib
-from datetime import datetime, timezone
 
 
 def sha256_of_file(path):
@@ -31,7 +30,6 @@ def count_lines(path):
 
 def main(input_vcf, valid_jsonl, quarantine_jsonl, rule_version,
          sarek_version, out_path):
-    timestamp = datetime.now(timezone.utc).isoformat()
 
     n_valid = count_lines(valid_jsonl)
     n_quarantined = count_lines(quarantine_jsonl)
@@ -44,7 +42,6 @@ def main(input_vcf, valid_jsonl, quarantine_jsonl, rule_version,
         validation_status = "PARTIAL_QUARANTINE"
 
     bundle = {
-        "run_timestamp": timestamp,
         "input_vcf": input_vcf,
         "input_vcf_sha256": sha256_of_file(input_vcf),
         "rule_version": rule_version,
