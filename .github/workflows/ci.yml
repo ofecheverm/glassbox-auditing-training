@@ -17,6 +17,8 @@ jobs:
 
       - name: Install nf-test
         uses: nf-core/setup-nf-test@v1
+        with:
+          version: "0.9.5"
 
       - name: Run nf-test suite
         run: nf-test test tests/modules/triage.nf.test
