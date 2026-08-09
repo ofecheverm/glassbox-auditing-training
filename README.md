@@ -1,5 +1,7 @@
 ## Session 3 Recap — The Six Defects, Wrong vs. Corrected
 
+> 👉 New here? Start with [GETTING_STARTED.md](GETTING_STARTED.md) for step-by-step Session 4 instructions.
+
 We're reviewing every defect from last session before moving into today's topic. For each one: what was wrong, why it mattered, and the corrected code.
 
 ---
