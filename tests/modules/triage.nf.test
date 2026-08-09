@@ -1,0 +1,22 @@
+nextflow_process {
+    name "Test Process TRIAGE"
+    script "modules/triage.nf"
+    process "TRIAGE"
+
+    test("Should run without failures") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'sample'],
+                    file("${projectDir}/tests/sample.vcf")
+                ]
+                """
+            }
+        }
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+    }
+}

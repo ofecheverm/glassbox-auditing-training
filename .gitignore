@@ -6,3 +6,5 @@ results/
 
 # OS junk
 .DS_Store
+.nf-test/
+.nf-test.log

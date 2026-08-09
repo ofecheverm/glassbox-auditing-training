@@ -1,7 +1,7 @@
 #!/bin/bash
 # post-install.sh
 # Runs automatically when the GitHub Codespace is created.
-# Installs Nextflow and pre-pulls the container images this training repo uses.
+# Installs Nextflow, nf-test, and pre-pulls the container images this training repo uses.
 
 set -e
 
@@ -22,13 +22,28 @@ conda install -y -c bioconda nextflow > /dev/null 2>&1
 echo "✓ Nextflow: $(nextflow -version 2>&1 | head -1)"
 
 ###############################################################################
-# Step 2 — Pre-pull the container images used by this training repo
+# Step 2 — Install nf-test
+###############################################################################
+
+echo ""
+echo "Installing nf-test..."
+
+curl -fsSL https://get.nf-test.com | bash > /dev/null 2>&1
+mkdir -p "$HOME/.local/bin"
+mv nf-test "$HOME/.local/bin/"
+chmod +x "$HOME/.local/bin/nf-test"
+export PATH="$PATH:$HOME/.local/bin"
+echo 'export PATH="$PATH:$HOME/.local/bin"' >> "$HOME/.bashrc"
+
+echo "✓ nf-test: $("$HOME/.local/bin/nf-test" version 2>&1 | head -2 | tail -1)"
+
+###############################################################################
+# Step 3 — Pre-pull the container images used by this training repo
 ###############################################################################
 
 echo ""
 echo "Pre-pulling container images..."
 
-# Give docker-in-docker a moment to finish starting before we use it
 for i in $(seq 1 10); do
     if docker info > /dev/null 2>&1; then
         break
@@ -44,7 +59,7 @@ else
 fi
 
 ###############################################################################
-# Step 3 — Verify installation
+# Step 4 — Verify installation
 ###############################################################################
 
 echo ""
@@ -52,6 +67,7 @@ echo "Verifying installation..."
 
 echo "✓ Java: $(java -version 2>&1 | head -1)"
 echo "✓ Nextflow: $(nextflow -version 2>&1 | head -1)"
+echo "✓ nf-test: $("$HOME/.local/bin/nf-test" version 2>&1 | head -2 | tail -1)"
 
 if command -v docker >/dev/null 2>&1; then
     echo "✓ Docker: $(docker --version)"
