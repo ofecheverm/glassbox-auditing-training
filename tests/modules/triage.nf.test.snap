@@ -1,32 +1,16 @@
 {
     "Should run without failures": {
         "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "id": "sample"
-                        },
-                        "sample.triage.jsonl:md5,663bf68c29e6ca54d5063ac3a66151b4"
-                    ]
-                ],
-                "1": [
-                    "versions.yml:md5,40be9f4d1fba48ea9d4e645dcd9066e2"
-                ],
-                "triage_jsonl": [
-                    [
-                        {
-                            "id": "sample"
-                        },
-                        "sample.triage.jsonl:md5,663bf68c29e6ca54d5063ac3a66151b4"
-                    ]
-                ],
-                "versions": [
-                    "versions.yml:md5,40be9f4d1fba48ea9d4e645dcd9066e2"
+            [
+                [
+                    {
+                        "id": "sample"
+                    },
+                    "sample.triage.jsonl:md5,c61f6f668099accef79c6ba8adae62f5"
                 ]
-            }
+            ]
         ],
-        "timestamp": "2026-08-08T15:29:39.107128208",
+        "timestamp": "2026-08-10T12:08:54.326729371",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.4"
