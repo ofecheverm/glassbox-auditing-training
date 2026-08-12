@@ -228,7 +228,7 @@ container 'python@sha256:<the digest you just fetched>'
 
 **Where:** `bin/triage.py`
 
-📝 *Every line of output got the same timestamp stamped in — but that timestamp is different every single run, so two runs of identical input never produce byte-identical output. This is today's live demo defect — see the nf-test section below.*
+📝 *Every line of output got the same timestamp stamped in — but that timestamp is different every single run, so two runs of identical input never produce byte-identical output. This is today's live demo defect — see the Session 4 section below.*
 
 ❌ **Wrong:**
 ```python
@@ -529,7 +529,7 @@ EOF
 
 **Where:** the repository itself — check the Releases page and Actions tab
 
-📝 *No tag means there's no fixed, citable version to point to. No CI means nothing automatically re-checks the pipeline still works. This is exactly what today's session fixes — see below.*
+📝 *No tag means there's no fixed, citable version to point to. No CI means nothing automatically re-checks the pipeline still works. This is exactly what Session 4 fixes — see below.*
 
 ✅ **Corrected — create a tagged release:**
 ```bash
@@ -537,46 +537,62 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-✅ **Corrected — CI workflow:** see the full Session 4 section below.
+✅ **Corrected — CI workflow:** see below.
 
 ---
 
-## Session 4 — From Audit to Automation: nf-test & CI/CD
+## Session 4 — From Audit to Automation: nf-test & CI
 
 Last session, finding these six defects meant reading code by hand. Today, we teach a robot to find at least one of them automatically, forever, on every single change — no human needs to remember to check.
+
+> 👉 **For the full live, step-by-step class sequence — forking, enabling Actions, triggering red on GitHub, fixing, going green, and tagging — follow [GETTING_STARTED.md](GETTING_STARTED.md).** The section below is reference material: the concepts, and the exact corrected code blocks GETTING_STARTED.md tells you to copy from.
 
 ### What is nf-test?
 
 Think of it like a teacher who grades your homework against an answer key. You tell it: "run this, and remember exactly what comes out." Every time the code changes, it re-checks: does the output still match? If yes — green. If no — red, and it shows you exactly what's different.
 
-### Step 1 — Run the test twice, watch it fail
+Nobody types the answer key by hand — nf-test creates it automatically, the first time it runs a test with nothing saved yet. Worth remembering: the answer key isn't independently "true," it's just whatever the code produced the first time, saved and trusted. If the first run is buggy, the answer key is buggy too.
 
-```bash
-nf-test test tests/modules/triage.nf.test
-nf-test test tests/modules/triage.nf.test
+### The test file — `tests/modules/triage.nf.test`
+
+```groovy
+nextflow_process {
+    name "Test Process TRIAGE"
+    script "modules/triage.nf"
+    process "TRIAGE"
+
+    test("Should run without failures") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'sample'],
+                    file("${projectDir}/tests/sample.vcf")
+                ]
+                """
+            }
+        }
+        then {
+            assert process.success
+            assert snapshot(process.out.triage_jsonl).match()
+        }
+    }
+}
 ```
 
-The second run should fail with a snapshot mismatch — same input, same code, different output. That's Defect #4, caught automatically instead of by a human reading code.
+Note this checks `process.out.triage_jsonl` specifically — the actual scientific output — not the whole `process.out`. This avoids a real issue we hit while building this training: checking everything, including the `versions.yml` metadata file, can cause false failures between two machines with slightly different installed Python patch versions, even when the real output is identical.
 
-### Step 2 — Apply the Defect #4 fix
+### The saved answer key — `tests/modules/triage.nf.test.snap`
 
-Use the corrected `bin/triage.py` from the Defect 4 section above.
-
-### Step 3 — Reset the snapshot and confirm it now stays green
+This is a single file, sitting right next to the test file — **not** a folder. This distinction matters: deleting the wrong thing (e.g. a `__snapshot__` folder that doesn't exist in this version of nf-test) silently does nothing.
 
 ```bash
-rm -rf tests/modules/__snapshot__
-nf-test test tests/modules/triage.nf.test
-nf-test test tests/modules/triage.nf.test
+rm tests/modules/triage.nf.test.snap
 ```
 
-First run creates a fresh baseline. Second run should now show `PASSED` — same input, same code, finally the same output every time.
+### The CI workflow — `.github/workflows/ci.yml`
 
-### Step 4 — Add CI so this check runs automatically on every push
-
-```bash
-mkdir -p .github/workflows
-cat > .github/workflows/ci.yml << 'EOF'
+```yaml
 name: CI
 
 on:
@@ -596,27 +612,34 @@ jobs:
 
       - name: Install nf-test
         uses: nf-core/setup-nf-test@v1
+        with:
+          version: "0.9.5"
 
       - name: Run nf-test suite
         run: nf-test test tests/modules/triage.nf.test
-EOF
 ```
 
-Commit and push — GitHub now runs this test on every push, automatically, whether anyone remembers to or not:
+The `version: "0.9.5"` line matters — `nf-core/setup-nf-test@v1` otherwise defaults to an older version (0.9.3) that isn't compatible with the Nextflow syntax used in this repo's tests.
 
-```bash
-git add .github/workflows/ci.yml tests/modules/__snapshot__
-git commit -m "Add nf-test CI workflow"
-git push
+### CI vs. CD
+
+CI (Continuous Integration) is the rule: check everything, every time, automatically. CD (Continuous Delivery/Deployment) is the next step beyond that — automatically releasing code once it passes, with no human involved. This session covers CI only; tagging your release (Defect 6) is still done by hand here.
+
+### Does nf-test only work for Nextflow?
+
+Yes, nf-test itself is Nextflow-specific. But the underlying idea — "have a robot grader check every change automatically" — is universal. Every serious language has its own equivalent: pytest (Python), Jest (JavaScript), testthat (R), JUnit (Java). The tool is specific to Nextflow; the idea is how professional software is built everywhere.
+
+### Scaling this to a whole pipeline
+
+Today's example tests one process. A fully-tested pipeline follows the same pattern per process — `tests/modules/json_validation.nf.test`, `tests/modules/audit_bundle.nf.test`, and so on — and the CI workflow's last line changes from testing one file to testing the whole folder:
+
+```yaml
+      - name: Run nf-test suite
+        run: nf-test test tests/
 ```
 
-Check the **Actions** tab on GitHub — a green ✅ or red ❌ should now appear directly on your commit.
+nf-test automatically finds and runs every `.nf.test` file inside that folder.
 
-### Today's exercise
+---
 
-Working in your own fork:
-1. Confirm the test fails against the still-broken `main` (run twice, see red)
-2. Apply the Defect #4 fix, reset the snapshot, confirm green
-3. Add the CI workflow, push, and confirm the Actions tab shows a passing check
-
-We'll compare everyone's Actions tab together at the end of the session.
+**Ready to actually do this, live?** Go to [GETTING_STARTED.md](GETTING_STARTED.md) and follow it in order.
