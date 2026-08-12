@@ -6,14 +6,14 @@
                     {
                         "id": "sample"
                     },
-                    "sample.triage.jsonl:md5,c61f6f668099accef79c6ba8adae62f5"
+                    "sample.triage.jsonl:md5,23f6accf6b80cd9af2bd2c7f126e8c88"
                 ]
             ]
         ],
-        "timestamp": "2026-08-10T12:08:54.326729371",
+        "timestamp": "2026-08-12T17:54:12.681789268",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }
